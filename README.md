@@ -5,6 +5,10 @@ cuyos autores son **John Carnell y Illary Huaylupo Sánchez.**
 
 ---
 
+# Capítulo 1: Bienvenido a la nube, Spring
+
+---
+
 ## [Pág. 4] ¿Qué es un microservicio?
 
 `Un microservicio es un servicio distribuido pequeño y débilmente acoplado`. Los microservicios le permiten tomar una
@@ -270,3 +274,52 @@ estilo pull o push:
 > Es importante comprender que las métricas de monitoreo son un aspecto esencial de las arquitecturas de microservicios
 > y que los requisitos de monitoreo en este tipo de arquitecturas tienden a ser mayores que los de las estructuras
 > monolíticas debido a su alta distribución.
+
+## [Pág. 28] Microservice build/deployment patterns
+
+Una de las partes centrales de una arquitectura de microservicio es que cada instancia de un microservicio debe ser
+idéntica a todas las demás instancias. No puede permitir que se produzca una desviación de la configuración (algo cambia
+en un servidor después de su implementación) porque esto puede introducir inestabilidad en sus aplicaciones.
+
+El objetivo de este patrón es integrar la configuración de su infraestructura directamente en su proceso
+de `build/deployment` para que ya no implemente artefactos de software como archivos Java WAR o EAR en una
+infraestructura que ya se está ejecutando. En su lugar, desea crear y compilar su microservicio y la imagen del servidor
+virtual en el que se ejecuta como parte del proceso de compilación. Luego, cuando se implementa su microservicio, se
+implementa toda la imagen de la máquina con el servidor ejecutándose. La `figura 1.17` ilustra este proceso. Al final
+del libro, veremos cómo crear su `build/deployment pipeline`. En el capítulo 12, cubrimos los siguientes patrones y
+temas:
+
+- `Build and deployment pipelines`: cómo se crea un proceso de compilación e implementación repetible que enfatiza las
+  compilaciones y la implementación con un solo botón en cualquier entorno de su organización.
+
+
+- `Infrastructure as code`: cómo trata el aprovisionamiento de sus servicios como código que puede ejecutarse y
+  administrarse bajo control de código fuente.
+
+
+- `Immutable servers`: una vez creada una imagen de microservicio, cómo asegurarse de que nunca cambie después de su
+  implementación.
+
+
+- `Servidores Phoenix`: cómo garantizar que los servidores que ejecutan contenedores individuales se desmantelen
+  periódicamente y se vuelvan a crear a partir de una imagen inmutable. Cuanto más tiempo esté funcionando un servidor,
+  más posibilidades habrá de que se produzcan cambios en la configuración. Puede ocurrir una desviación de la
+  configuración cuando los cambios ad hoc en la configuración de un sistema no se registran.
+
+Nuestro objetivo con estos patrones y temas es exponer y eliminar despiadadamente la desviación de la configuración lo
+más rápido posible antes de que pueda afectar a sus entornos superiores (escenario o producción).
+
+![09.build-deployment-pattern.png](./assets/09.build-deployment-pattern.png)
+
+**NOTA**
+
+> Para los ejemplos de código de este libro (excepto en el capítulo 12), todo se ejecutará localmente en su máquina de
+> escritorio. Los primeros capítulos se pueden ejecutar de forma nativa directamente desde la línea de comandos. A
+> partir
+> del capítulo 3, todo el código se compilará y ejecutará como `contenedores Docker`.
+
+
+Ahora que hemos cubierto los patrones que usaremos a lo largo del libro, continuemos con el segundo capítulo. En el
+próximo capítulo, cubriremos las tecnologías Spring Cloud que usaremos, algunas de las mejores prácticas para diseñar
+una aplicación orientada a microservicios en la nube y los primeros pasos para crear nuestro primer microservicio usando
+Spring Boot y Java.
