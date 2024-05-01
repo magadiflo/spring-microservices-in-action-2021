@@ -209,3 +209,30 @@ autenticación que pueda proteger sus microservicios:
   se pueda pasar de una llamada de servicio a otra para autenticar y autorizar al usuario.
 
 ![06.security-pattern.png](./assets/06.security-pattern.png)
+
+## [Pág. 26] Microservice logging and tracing patterns
+
+La desventaja de una arquitectura de microservicio es que es mucho más difícil depurar, rastrear y monitorear los
+problemas porque una simple acción puede desencadenar numerosas llamadas de microservicio dentro de su aplicación. Otros
+capítulos cubrirán cómo implementar el seguimiento distribuido con Spring Cloud Sleuth, Zipkin y ELK Stack. Por este
+motivo, veremos los siguientes tres patrones principales de registro y seguimiento `(logging and tracing)` para lograr
+un seguimiento distribuido:
+
+- `Log correlation`: cómo vincula todos los registros producidos entre servicios para una sola transacción de usuario.
+  Con este patrón, veremos cómo implementar una ID de correlación, que es un identificador único que se incluye en todas
+  las llamadas de servicio en una transacción y que se puede utilizar para vincular las entradas de registro producidas
+  por cada servicio.
+
+
+- `Log aggregation`: con este patrón, veremos cómo reunir todos los registros producidos por sus microservicios (y sus
+  instancias individuales) en una única base de datos consultable en todos los servicios involucrados y comprenderemos
+  las características de rendimiento de los servicios en la transacción.
+
+
+- `Microservice tracing`: exploraremos cómo visualizar el flujo de una transacción de cliente en todos los servicios
+  involucrados y comprenderemos las características de rendimiento de los servicios de la transacción.
+
+La `figura 1.15` muestra cómo encajan estos patrones. Cubriremos los patrones de registro y rastreo con mayor detalle en
+el capítulo 11.
+
+![07.logging-and-tracing-pattern.png](./assets/07.logging-and-tracing-pattern.png)
