@@ -150,7 +150,41 @@ abstraer la dirección IP física de esos servicios y tener un único punto de e
   servicios e instancias de servicios en sus aplicaciones de microservicios. ¿Cómo? Con `Spring Cloud API Gateway`, como
   explicamos en el capítulo 8.
 
-
-La `Figura 1.12` muestra cómo el descubrimiento de servicios y el enrutamiento de servicios parecen tener una secuencia codificada de eventos entre ellos (primero viene el enrutamiento de servicios y luego el descubrimiento de servicios). Sin embargo, los dos patrones no dependen uno del otro. Por ejemplo, podemos implementar el descubrimiento de servicios sin enrutamiento de servicios, y podemos implementar el enrutamiento de servicios sin descubrimiento de servicios (aunque su implementación es más difícil)
+La `Figura 1.12` muestra cómo el descubrimiento de servicios y el enrutamiento de servicios parecen tener una secuencia
+codificada de eventos entre ellos (primero viene el enrutamiento de servicios y luego el descubrimiento de servicios).
+Sin embargo, los dos patrones no dependen uno del otro. Por ejemplo, podemos implementar el descubrimiento de servicios
+sin enrutamiento de servicios, y podemos implementar el enrutamiento de servicios sin descubrimiento de servicios (
+aunque su implementación es más difícil)
 
 ![04.service-discovery-and-service-routing-pattern.png](./assets/04.service-discovery-and-service-routing-pattern.png)
+
+## [Pág. 23] Microservice client resiliency
+
+Debido a que las arquitecturas de microservicios están altamente distribuidas, debe ser extremadamente sensible a la
+hora de evitar que un problema en un solo servicio (o instancia de servicio) se propague en cascada hacia los
+consumidores del servicio. **Con este fin, cubriremos cuatro patrones de resiliencia del cliente:**
+
+- `Client-side load balancing`: cómo almacena en caché la ubicación de sus instancias de servicio en el servicio para
+  que las llamadas a múltiples instancias de un microservicio tengan un equilibrio de carga para todas las instancias de
+  estado de ese microservicio.
+
+
+- `Circuit breaker pattern`: cómo se evita que un cliente siga llamando a un servicio que está fallando o que sufre
+  problemas de rendimiento. Cuando un servicio se ejecuta lentamente, consume recursos del cliente que lo llama. Quiere
+  que estas llamadas de microservicio fallen rápidamente para que el cliente que llama pueda responder rápidamente y
+  tomar las medidas adecuadas.
+
+
+- `Fallback pattern`: cuando falla una llamada de servicio, cómo se proporciona un mecanismo de “complemento” que
+  permite al cliente del servicio intentar realizar su trabajo a través de medios alternativos además del microservicio
+  al que se llama.
+
+
+- `Bulkhead pattern`: las aplicaciones de microservicio utilizan múltiples recursos distribuidos para realizar su
+  trabajo. Este patrón se refiere a cómo compartimenta estas llamadas para que el mal comportamiento de una llamada de
+  servicio no afecte negativamente al resto de la aplicación.
+
+La `Figura 1.13` muestra cómo estos patrones protegen al consumidor del servicio de verse afectado cuando un servicio se
+comporta mal. Estos temas se tratan en el capítulo 7.
+
+![05.client-resiliency.png](./assets/05.client-resiliency.png)
