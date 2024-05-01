@@ -236,3 +236,37 @@ La `figura 1.15` muestra cómo encajan estos patrones. Cubriremos los patrones d
 el capítulo 11.
 
 ![07.logging-and-tracing-pattern.png](./assets/07.logging-and-tracing-pattern.png)
+
+## [Pág.27] Application metrics pattern
+
+El patrón de métricas de la aplicación trata de cómo la aplicación va a monitorear las métricas y advertir de posibles
+causas de falla dentro de nuestras aplicaciones. Este patrón muestra cómo el servicio de métricas es responsable de
+obtener (extraer), almacenar y consultar datos relacionados con el negocio para evitar posibles problemas de rendimiento
+en nuestros servicios. Este patrón contiene los siguientes tres componentes principales:
+
+- `Métricas`: cómo crear información crítica sobre el estado de su aplicación y cómo exponer esas métricas.
+
+
+- `Servicio de métricas`: donde puede almacenar y consultar las métricas de la aplicación.
+
+
+- `Suite de visualización de métricas`: donde puede visualizar datos de tiempo relacionados con el negocio para la
+  aplicación y la infraestructura.
+
+La `Figura 1.16` muestra cómo las métricas generadas por los microservicios dependen en gran medida del servicio de
+métricas y del conjunto de visualización. De nada serviría tener métricas que generen y muestren infinita información si
+no hay forma de entender y analizar esa información. El servicio de métricas puede obtener las métricas utilizando el
+estilo pull o push:
+
+- `Con el estilo push`, la instancia de servicio invoca una API de servicio expuesta por el servicio de métricas para
+  enviar los datos de la aplicación.
+
+
+- `Con el estilo pull`, el servicio de métricas solicita o consulta una función para recuperar los datos de la
+  aplicación.
+
+![08.metrics-pattern.png](./assets/08.metrics-pattern.png)
+
+> Es importante comprender que las métricas de monitoreo son un aspecto esencial de las arquitecturas de microservicios
+> y que los requisitos de monitoreo en este tipo de arquitecturas tienden a ser mayores que los de las estructuras
+> monolíticas debido a su alta distribución.
