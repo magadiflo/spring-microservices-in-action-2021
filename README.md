@@ -127,3 +127,30 @@ microservicio:
   dependencias codificadas entre sus servicios y aumentar la resiliencia de su aplicación? Usaremos una arquitectura
   basada en eventos con Spring Cloud Stream como se explica en el capítulo 10.
 
+## [Pág. 22] Microservice routing patterns
+
+Los patrones de enrutamiento de microservicios abordan cómo una aplicación cliente que desea consumir un microservicio
+descubre la ubicación del servicio y se enruta hacia él. En una aplicación basada en la nube, es posible tener cientos
+de instancias de microservicios en ejecución. Para hacer cumplir las políticas de seguridad y contenido, es necesario
+abstraer la dirección IP física de esos servicios y tener un único punto de entrada para las llamadas de servicio.
+¿Cómo? Los siguientes patrones responderán a esa pregunta:
+
+- `Descubrimiento de servicios`: con el descubrimiento de servicios y su característica clave, el registro de servicios,
+  puede hacer que su microservicio sea reconocible para que las aplicaciones cliente puedan encontrarlo sin tener la
+  ubicación del servicio codificada en su aplicación. ¿Cómo? Explicamos esto en el capítulo 6. Recuerde que el
+  descubrimiento de servicios es un servicio interno, no un servicio de cara al cliente.<br><br>
+  Tenga en cuenta que en este libro utilizamos `Netflix Eureka Service Discovery`, pero existen otros registros de
+  servicios como etcd, Consul y Apache Zookeeper. Además, algunos sistemas no cuentan con un registro de servicios
+  explícito. En cambio, estos utilizan una infraestructura de comunicación entre servicios conocida como malla de
+  servicios.
+
+
+- `Enrutamiento de servicios`: con `API Gateway`, puede proporcionar un único punto de entrada para todos sus servicios,
+  de modo que las políticas de seguridad y las reglas de enrutamiento se apliquen de manera uniforme a múltiples
+  servicios e instancias de servicios en sus aplicaciones de microservicios. ¿Cómo? Con `Spring Cloud API Gateway`, como
+  explicamos en el capítulo 8.
+
+
+La `Figura 1.12` muestra cómo el descubrimiento de servicios y el enrutamiento de servicios parecen tener una secuencia codificada de eventos entre ellos (primero viene el enrutamiento de servicios y luego el descubrimiento de servicios). Sin embargo, los dos patrones no dependen uno del otro. Por ejemplo, podemos implementar el descubrimiento de servicios sin enrutamiento de servicios, y podemos implementar el enrutamiento de servicios sin descubrimiento de servicios (aunque su implementación es más difícil)
+
+![04.service-discovery-and-service-routing-pattern.png](./assets/04.service-discovery-and-service-routing-pattern.png)
