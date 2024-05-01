@@ -188,3 +188,24 @@ La `Figura 1.13` muestra cómo estos patrones protegen al consumidor del servici
 comporta mal. Estos temas se tratan en el capítulo 7.
 
 ![05.client-resiliency.png](./assets/05.client-resiliency.png)
+
+## [Pág. 25] Microservice security patterns
+
+Para garantizar que los microservicios no estén abiertos al público, es importante aplicar los siguientes patrones de
+seguridad a la arquitectura para garantizar que solo las solicitudes concedidas con las credenciales adecuadas puedan
+invocar los servicios. La `Figura 1.14` muestra cómo puede implementar estos tres patrones para crear un servicio de
+autenticación que pueda proteger sus microservicios:
+
+- `Autenticación`: cómo se determina que el cliente del servicio que llama al servicio es quien dice ser.
+
+
+- `Autorización`: cómo se determina si el cliente del servicio que llama a un microservicio tiene permiso para realizar
+  la acción que está intentando realizar.
+
+
+- `Gestión y propagación de credenciales`: cómo evitar que un cliente de servicio tenga que presentar constantemente sus
+  credenciales para las llamadas de servicio involucradas en una transacción. Para lograr esto, veremos cómo se pueden
+  utilizar estándares de seguridad basados en tokens, como `OAuth2` y `JSON Web Tokens (JWT)`, para obtener un token que
+  se pueda pasar de una llamada de servicio a otra para autenticar y autorizar al usuario.
+
+![06.security-pattern.png](./assets/06.security-pattern.png)
