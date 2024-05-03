@@ -1,12 +1,19 @@
 package dev.magadiflo.licensing.app.service;
 
 import dev.magadiflo.licensing.app.model.License;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.Locale;
 import java.util.Random;
 
+@RequiredArgsConstructor
 @Service
 public class LicenseService {
+
+    private final MessageSource message;
 
     public License getLicense(String licenseId, String organizationId) {
         License license = new License();
@@ -19,11 +26,12 @@ public class LicenseService {
         return license;
     }
 
-    public String createLicense(License license, String organizationId) {
+    public String createLicense(License license, String organizationId, Locale locale) {
         String responseMessage = null;
         if (license != null) {
             license.setOrganizationId(organizationId);
-            responseMessage = "Este es el POST y el objeto es: %s".formatted(license.toString());
+            responseMessage = this.message.getMessage("license.create.message", null, locale)
+                    .formatted(license.toString());
         }
         return responseMessage;
     }
@@ -32,13 +40,15 @@ public class LicenseService {
         String responseMessage = null;
         if (license != null) {
             license.setOrganizationId(organizationId);
-            responseMessage = "Este es el PUT y el objeto es: %s".formatted(license.toString());
+            responseMessage = this.message.getMessage("license.update.message", null, LocaleContextHolder.getLocale())
+                    .formatted(license.toString());
         }
         return responseMessage;
     }
 
     public String deleteLicense(String licenseId, String organizationId) {
-        return "Eliminando licencia con id %s para la organización %s".formatted(licenseId, organizationId);
+        return this.message.getMessage("license.delete.message", null, LocaleContextHolder.getLocale())
+                .formatted(licenseId, organizationId);
     }
 
 }

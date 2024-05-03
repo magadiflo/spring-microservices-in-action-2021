@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Locale;
+
 /**
  * {organizationId} es un marcador de posición que indica cómo espera que se parametrice la URL con un
  * OrganizationId pasado en cada llamada. El uso de OrganizationId en la URL le permite diferenciar
@@ -31,8 +33,10 @@ public class LicenseController {
     }
 
     @PostMapping
-    public ResponseEntity<String> createLicense(@PathVariable String organizationId, @RequestBody License license) {
-        return ResponseEntity.ok(this.licenseService.createLicense(license, organizationId));
+    public ResponseEntity<String> createLicense(@PathVariable String organizationId,
+                                                @RequestBody License license,
+                                                @RequestHeader(value = "Accept-Language", required = false) Locale locale) {
+        return ResponseEntity.ok(this.licenseService.createLicense(license, organizationId, locale));
     }
 
     @DeleteMapping(path = "/{licenseId}")
