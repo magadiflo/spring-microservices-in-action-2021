@@ -3,6 +3,8 @@ package dev.magadiflo.licensing.app.controller;
 import dev.magadiflo.licensing.app.model.License;
 import dev.magadiflo.licensing.app.service.LicenseService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +26,20 @@ public class LicenseController {
     @GetMapping(path = "/{licenseId}")
     public ResponseEntity<License> getLicense(@PathVariable String organizationId, @PathVariable String licenseId) {
         License license = this.licenseService.getLicense(licenseId, organizationId);
+
+        license.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(LicenseController.class)
+                                .getLicense(organizationId, license.getLicenseId()))
+                        .withSelfRel(),
+                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(LicenseController.class)
+                                .createLicense(organizationId, license, LocaleContextHolder.getLocale()))
+                        .withRel("createLicense"),
+                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(LicenseController.class)
+                                .updateLicense(organizationId, license))
+                        .withRel("updateLicense"),
+                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(LicenseController.class)
+                                .deleteLicense(organizationId, license.getLicenseId()))
+                        .withRel("deleteLicense"));
+
         return ResponseEntity.ok(license);
     }
 

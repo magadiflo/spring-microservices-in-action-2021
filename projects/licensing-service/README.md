@@ -559,3 +559,130 @@ $ curl -v -X DELETE http://localhost:8080/v1/organization/optimaGrowth/license/0
 <
 license.delete.message
 ````
+
+## 3. Implementar Spring HATEOAS para proporcionar suficiente información para que el usuario pueda interactuar con el servidor
+
+`HATEOAS significa Hipermedia como motor de estado de aplicación`. Spring HATEOAS es un pequeño proyecto que nos permite
+crear API que siguen el principio HATEOAS de mostrar los enlaces relacionados para un recurso determinado. El principio
+HATEOAS establece que una API debe proporcionar una guía al cliente devolviendo información sobre los posibles próximos
+pasos con cada respuesta de servicio. Este proyecto no es una característica básica ni imprescindible, pero si desea
+tener una guía completa para todos los servicios API de un recurso determinado, es una excelente opción.
+
+Con Spring HATEOAS, puede crear rápidamente clases de modelos para enlaces a modelos de representación de recursos.
+También proporciona una API de creación de enlaces para crear enlaces específicos que apuntan a métodos del controlador
+Spring MVC.
+
+`Spring HATEOAS`, facilita la creación de `API RESTful` que siguen el principio `HATEOAS` cuando se trabaja con
+`Spring/Spring MVC`.
+
+En esta sección, le mostraremos cómo implementar `Spring HATEOAS` en el servicio de licencia. Lo primero que debemos
+hacer para enviar los enlaces relacionados a un recurso en la respuesta, es agregar la dependencia HATEOAS a nuestro
+archivo `pom.xml`, así:
+
+````xml
+
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-hateoas</artifactId>
+</dependency>
+````
+
+Una vez que tenemos la dependencia, necesitamos actualizar la clase `License` para poder extenderla desde
+`RepresentationModel<License>`. La siguiente lista muestra cómo hacer esto.
+
+````java
+
+@ToString
+@Getter
+@Setter
+public class License extends RepresentationModel<License> {
+    private Integer id;
+    private String licenseId;
+    private String description;
+    private String organizationId;
+    private String productName;
+    private String licenseType;
+}
+````
+
+`RepresentationModel<License>` nos brinda la posibilidad de agregar enlaces a la clase de modelo `License`. Ahora que
+tenemos todo configurado, creemos la configuración de `HATEOS` para recuperar los enlaces de la
+clase `LicenseController`. La siguiente lista muestra cómo se hace esto. Para este ejemplo, solo cambiaremos el método
+`getLicense()` en la clase `LicenseController`.
+
+````java
+
+@RequiredArgsConstructor
+@RestController
+@RequestMapping(path = "/v1/organization/{organizationId}/license")
+public class LicenseController {
+
+    private final LicenseService licenseService;
+
+    @GetMapping(path = "/{licenseId}")
+    public ResponseEntity<License> getLicense(@PathVariable String organizationId, @PathVariable String licenseId) {
+        License license = this.licenseService.getLicense(licenseId, organizationId);
+
+        license.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(LicenseController.class)
+                                .getLicense(organizationId, license.getLicenseId()))
+                        .withSelfRel(),
+                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(LicenseController.class)
+                                .createLicense(organizationId, license, LocaleContextHolder.getLocale()))
+                        .withRel("createLicense"),
+                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(LicenseController.class)
+                                .updateLicense(organizationId, license))
+                        .withRel("updateLicense"),
+                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(LicenseController.class)
+                                .deleteLicense(organizationId, license.getLicenseId()))
+                        .withRel("deleteLicense"));
+
+        return ResponseEntity.ok(license);
+    }
+    /* another methods */
+}
+````
+
+El método `add()` es un método de `RepresentationModel`. El método `linkTo` inspecciona la clase de controlador de
+licencia y obtiene la asignación raíz, y el método `methodOn` obtiene la asignación del método realizando una invocación
+ficticia del método de destino. Ambos métodos son métodos estáticos
+de `org.springframework.hateoas.server.mvc.WebMvcLinkBuilder` es una clase de utilidad para crear enlaces en las clases
+de controlador. La siguiente llamada http muestra los enlaces en el cuerpo de respuesta del servicio `getLicense()`.
+Para recuperarlos, debe llamar al método GET HTTP.
+
+````bash
+$ curl -v http://localhost:8080/v1/organization/optimaGrowth/license/0235431845 | jq
+<
+< HTTP/1.1 200
+< Content-Type: application/hal+json
+< Transfer-Encoding: chunked
+< Date: Fri, 03 May 2024 03:33:35 GMT
+<
+{
+  "id": 702,
+  "licenseId": "0235431845",
+  "description": "Software product",
+  "organizationId": "optimaGrowth",
+  "productName": "Ostock",
+  "licenseType": "full",
+  "_links": {
+    "self": {
+      "href": "http://localhost:8080/v1/organization/optimaGrowth/license/0235431845"
+    },
+    "createLicense": {
+      "href": "http://localhost:8080/v1/organization/optimaGrowth/license"
+    },
+    "updateLicense": {
+      "href": "http://localhost:8080/v1/organization/optimaGrowth/license"
+    },
+    "deleteLicense": {
+      "href": "http://localhost:8080/v1/organization/optimaGrowth/license/0235431845"
+    }
+  }
+}
+````
+
+En este punto, tiene el esqueleto de un servicio en ejecución. Pero desde una perspectiva de desarrollo, este servicio
+no está completo. Un buen diseño de microservicio no evita segregar el servicio en capas de acceso a datos y lógica
+empresarial bien definidas. A medida que avance en capítulos posteriores, continuará repitiendo este servicio y
+profundizando en cómo estructurarlo. Por ahora, pasemos a la perspectiva final: explorar cómo un ingeniero de DevOps
+pondría en funcionamiento el servicio y lo empaquetaría para su implementación en la nube.
