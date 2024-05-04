@@ -1,0 +1,7 @@
+# Ignora todos los archivos y directorios del directorio raíz
+*
+# Incluye los directorios y archivos siguientes
+!src/
+!pom.xml
+!.mvn/
+!mvnw
