@@ -1,0 +1,27 @@
+example:
+  property: 'Soy el archivo de propiedad del servicio licensing-service por DEFAULT'
+
+spring:
+  database:
+    driverClassName: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+      naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    database: POSTGRESQL
+    show-sql: true
+
+  datasource:
+    platform: postgres
+    testWhileIdle: true
+    validationQuery: 'SELECT 1'
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+    enabled-by-default: true

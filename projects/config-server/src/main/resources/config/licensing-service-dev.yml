@@ -1,0 +1,8 @@
+example:
+  property: 'Soy el archivo de propiedad del servicio licensing-service para DEV'
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/db_licensing_service_dev
+    username: admin
+    password: magadiflo
