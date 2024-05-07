@@ -1,6 +1,10 @@
 spring:
   application:
     name: licensing-service
+  profiles:
+    active: dev
+  config:
+    import: optional:configserver:http://localhost:8888
 
 management:
   endpoints:
@@ -8,6 +12,8 @@ management:
       exposure:
         include: '*'
   endpoint:
+    env:
+      show-values: ALWAYS
     health:
       show-details: always
   health:
