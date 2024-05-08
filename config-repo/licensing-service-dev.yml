@@ -1,0 +1,8 @@
+example:
+  property: '[GIT] licensing-service-dev.yml: DEV'
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/db_licensing_service_dev
+    username: postgres
+    password: magadiflo

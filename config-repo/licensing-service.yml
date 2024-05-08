@@ -1,0 +1,28 @@
+example:
+  property: '[GIT] licensing-service.yml: DEFAULT'
+
+spring:
+  database:
+    driverClassName: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+      naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    database: POSTGRESQL
+    show-sql: true
+
+  datasource:
+    platform: postgres
+    testWhileIdle: true
+    validationQuery: 'SELECT 1'
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+    enabled-by-default: true
