@@ -1,5 +1,5 @@
 example:
-  property: 'Soy el archivo de propiedad del servicio licensing-service para DEV'
+  property: 'Estamos en el perfil DEV'
 
 spring:
   datasource:
