@@ -6,12 +6,17 @@ server:
 spring:
   application:
     name: config-server
-  #  profiles:
-  #    active: native
+  profiles:
+    active: vault, git
 
   cloud:
     config:
       server:
+        vault:
+          host: 127.0.0.1
+          port: 8200
+          kvVersion: 2
+          backend: spring-microservices
         git:
           uri: https://github.com/magadiflo/spring-microservices-in-action-2021.git
           searchPaths: config-repo
