@@ -3,6 +3,10 @@ server:
   error:
     include-message: always
 
+# Le dice al servidor de configuración que use este valor como clave simétrica
+encrypt:
+  key: IMSYMMETRIC
+
 spring:
   application:
     name: config-server

@@ -6,6 +6,10 @@ spring:
   config:
     import: optional:configserver:http://localhost:8888
 
+  cloud:
+    config:
+      token: myroot
+
 management:
   endpoints:
     web:
