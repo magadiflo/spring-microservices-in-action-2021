@@ -1,5 +1,5 @@
 example:
-  property: 'Estamos en el perfil DEV'
+  property: '[classpath:/config] licensing-service-dev.yml: DEV'
 
 spring:
   datasource:

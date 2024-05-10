@@ -1,5 +1,5 @@
 example:
-  property: 'Soy el archivo de propiedad del servicio licensing-service por DEFAULT'
+  property: '[classpath:/config] licensing-service.yml: DEFAULT'
 
 spring:
   database:

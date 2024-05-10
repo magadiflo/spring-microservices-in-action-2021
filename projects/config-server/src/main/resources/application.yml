@@ -11,11 +11,10 @@ spring:
   application:
     name: config-server
   profiles:
-    active: git
+    active: native
 
   cloud:
     config:
       server:
-        git:
-          uri: https://github.com/magadiflo/spring-microservices-in-action-2021.git
-          searchPaths: config-repo
+        native:
+          search-locations: classpath:/config
