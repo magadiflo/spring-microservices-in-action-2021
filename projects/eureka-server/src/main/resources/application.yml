@@ -1,0 +1,10 @@
+server:
+  error:
+    include-message: always
+
+spring:
+  application:
+    name: eureka-server
+
+  config:
+    import: optional:configserver:http://localhost:8888
