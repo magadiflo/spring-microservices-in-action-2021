@@ -41,6 +41,7 @@ public class LicenseService {
                         licenseDB.setContactName(organization.contactName());
                         licenseDB.setContactEmail(organization.contactEmail());
                         licenseDB.setContactPhone(organization.contactPhone());
+                        licenseDB.setPort(organization.port());
                     }
                     return licenseDB.withComments(this.serviceProperties.getProperty());
                 })

@@ -4,5 +4,6 @@ public record Organization(String organizationId,
                            String name,
                            String contactName,
                            String contactEmail,
-                           String contactPhone) {
+                           String contactPhone,
+                           Integer port) {
 }

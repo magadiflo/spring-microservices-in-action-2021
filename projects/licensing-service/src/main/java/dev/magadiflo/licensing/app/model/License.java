@@ -40,6 +40,8 @@ public class License extends RepresentationModel<License> {
     private String contactPhone;
     @Transient
     private String contactEmail;
+    @Transient
+    private Integer port;
 
     public License withComments(String comment) {
         this.setComment(comment);
