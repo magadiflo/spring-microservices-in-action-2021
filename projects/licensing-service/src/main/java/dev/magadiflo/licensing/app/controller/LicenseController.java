@@ -20,6 +20,13 @@ public class LicenseController {
 
     private final LicenseService licenseService;
 
+    @GetMapping(path = "/{licenseId}/{httpClientType}")
+    public ResponseEntity<License> getLicensesWithClient(@PathVariable String organizationId,
+                                                         @PathVariable String licenseId,
+                                                         @PathVariable String httpClientType) {
+        return ResponseEntity.ok(this.licenseService.getLicense(organizationId, licenseId, httpClientType));
+    }
+
     @GetMapping(path = "/{licenseId}")
     public ResponseEntity<License> getLicense(@PathVariable String organizationId, @PathVariable String licenseId) {
         License license = this.licenseService.getLicense(licenseId, organizationId);

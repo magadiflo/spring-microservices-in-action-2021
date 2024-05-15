@@ -1,9 +1,15 @@
 package dev.magadiflo.licensing.app.service;
 
+import dev.magadiflo.licensing.app.client.OrganizationDiscoveryClient;
+import dev.magadiflo.licensing.app.client.OrganizationFeignClient;
+import dev.magadiflo.licensing.app.client.OrganizationRestClient;
+import dev.magadiflo.licensing.app.client.OrganizationRestTemplateClient;
 import dev.magadiflo.licensing.app.config.ServiceProperties;
 import dev.magadiflo.licensing.app.model.License;
+import dev.magadiflo.licensing.app.model.Organization;
 import dev.magadiflo.licensing.app.repository.LicenseRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
@@ -11,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class LicenseService {
@@ -18,6 +25,30 @@ public class LicenseService {
     private final MessageSource message;
     private final LicenseRepository licenseRepository;
     private final ServiceProperties serviceProperties;
+
+    private final OrganizationFeignClient organizationFeignClient;
+    private final OrganizationRestTemplateClient organizationRestTemplateClient;
+    private final OrganizationDiscoveryClient organizationDiscoveryClient;
+    private final OrganizationRestClient organizationRestClient;
+
+
+    public License getLicense(String organizationId, String licenseId, String httpClientType) {
+        return this.licenseRepository.findByOrganizationIdAndLicenseId(organizationId, licenseId)
+                .map(licenseDB -> {
+                    Organization organization = this.retrieveOrganizationInfo(organizationId, httpClientType);
+                    if (organization != null) {
+                        licenseDB.setOrganizationName(organization.name());
+                        licenseDB.setContactName(organization.contactName());
+                        licenseDB.setContactEmail(organization.contactEmail());
+                        licenseDB.setContactPhone(organization.contactPhone());
+                    }
+                    return licenseDB.withComments(this.serviceProperties.getProperty());
+                })
+                .orElseThrow(() -> new IllegalArgumentException(
+                        this.message.getMessage("license.search.error.message", null, LocaleContextHolder.getLocale())
+                                .formatted(licenseId, organizationId))
+                );
+    }
 
     public License getLicense(String licenseId, String organizationId) {
         return this.licenseRepository.findByOrganizationIdAndLicenseId(organizationId, licenseId)
@@ -59,4 +90,14 @@ public class LicenseService {
                 .formatted(licenseId);
     }
 
+    private Organization retrieveOrganizationInfo(String organizationId, String httpClientType) {
+        log.info("Estoy usando {} como cliente HTTP", httpClientType);
+        return switch (httpClientType) {
+            case "feign" -> this.organizationFeignClient.getOrganization(organizationId);
+            case "restTemplate" -> this.organizationRestTemplateClient.getOrganization(organizationId);
+            case "discovery" -> this.organizationDiscoveryClient.getOrganization(organizationId);
+            case "restClient" -> this.organizationRestClient.getOrganization(organizationId);
+            default -> null;
+        };
+    }
 }

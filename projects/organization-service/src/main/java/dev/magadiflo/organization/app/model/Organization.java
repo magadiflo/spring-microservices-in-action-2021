@@ -1,9 +1,6 @@
 package dev.magadiflo.organization.app.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -28,4 +25,7 @@ public class Organization {
 
     @Column(nullable = false)
     private String contactPhone;
+
+    @Transient
+    private Integer port;
 }
