@@ -7,6 +7,8 @@ import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * {organizationId} es un marcador de posición que indica cómo espera que se parametrice la URL con un
  * OrganizationId pasado en cada llamada. El uso de OrganizationId en la URL le permite diferenciar
@@ -19,6 +21,13 @@ import org.springframework.web.bind.annotation.*;
 public class LicenseController {
 
     private final LicenseService licenseService;
+
+    // El parámetro action puede tomar los siguientes valores: success (default), exception, sleep y random
+    @GetMapping
+    public ResponseEntity<List<License>> getLicenses(@PathVariable String organizationId,
+                                                     @RequestParam(defaultValue = "success") String action) {
+        return ResponseEntity.ok(this.licenseService.getLicensesByOrganization(organizationId, action));
+    }
 
     @GetMapping(path = "/{licenseId}/{httpClientType}")
     public ResponseEntity<License> getLicensesWithClient(@PathVariable String organizationId,

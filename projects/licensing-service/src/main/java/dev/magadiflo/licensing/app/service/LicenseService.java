@@ -8,14 +8,19 @@ import dev.magadiflo.licensing.app.config.ServiceProperties;
 import dev.magadiflo.licensing.app.model.License;
 import dev.magadiflo.licensing.app.model.Organization;
 import dev.magadiflo.licensing.app.repository.LicenseRepository;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -31,6 +36,15 @@ public class LicenseService {
     private final OrganizationDiscoveryClient organizationDiscoveryClient;
     private final OrganizationRestClient organizationRestClient;
 
+    @CircuitBreaker(name = "licenseService")
+    public List<License> getLicensesByOrganization(String organizationId, String action) {
+        switch (action) {
+            case "exception" -> this.timeoutException();
+            case "sleep" -> this.sleep();
+            case "random" -> this.randomlyRunLong();
+        }
+        return this.licenseRepository.findByOrganizationId(organizationId);
+    }
 
     public License getLicense(String organizationId, String licenseId, String httpClientType) {
         return this.licenseRepository.findByOrganizationIdAndLicenseId(organizationId, licenseId)
@@ -100,5 +114,30 @@ public class LicenseService {
             case "restClient" -> this.organizationRestClient.getOrganization(organizationId);
             default -> null;
         };
+    }
+
+    // Nos da una posibilidad entre tres de que una llamada a la base de datos dure mucho tiempo
+    private void randomlyRunLong() {
+        Random random = new Random();
+        int randomNum = random.nextInt(3) + 1;
+        if (randomNum == 3) this.sleep();
+    }
+
+    // Duerme durante 5000ms (5s)
+    private void sleep() {
+        try {
+            TimeUnit.SECONDS.sleep(5);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    // Lanza un error
+    private void timeoutException() {
+        try {
+            throw new TimeoutException();
+        } catch (TimeoutException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
