@@ -109,11 +109,16 @@ public class LicenseService {
         log.info("Estoy usando {} como cliente HTTP", httpClientType);
         return switch (httpClientType) {
             case "feign" -> this.organizationFeignClient.getOrganization(organizationId);
-            case "restTemplate" -> this.organizationRestTemplateClient.getOrganization(organizationId);
+            case "restTemplate" -> this.getOrganization(organizationId);
             case "discovery" -> this.organizationDiscoveryClient.getOrganization(organizationId);
             case "restClient" -> this.organizationRestClient.getOrganization(organizationId);
             default -> null;
         };
+    }
+
+    @CircuitBreaker(name = "organizationService")
+    private Organization getOrganization(String organizationId) {
+        return this.organizationRestTemplateClient.getOrganization(organizationId);
     }
 
     // Nos da una posibilidad entre tres de que una llamada a la base de datos dure mucho tiempo
