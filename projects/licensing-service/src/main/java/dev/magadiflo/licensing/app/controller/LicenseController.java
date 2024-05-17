@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.TimeoutException;
 
 /**
  * {organizationId} es un marcador de posición que indica cómo espera que se parametrice la URL con un
@@ -25,7 +26,7 @@ public class LicenseController {
     // El parámetro action puede tomar los siguientes valores: success (default), exception, sleep y random
     @GetMapping
     public ResponseEntity<List<License>> getLicenses(@PathVariable String organizationId,
-                                                     @RequestParam(defaultValue = "success") String action) {
+                                                     @RequestParam(defaultValue = "success") String action) throws TimeoutException {
         return ResponseEntity.ok(this.licenseService.getLicensesByOrganization(organizationId, action));
     }
 

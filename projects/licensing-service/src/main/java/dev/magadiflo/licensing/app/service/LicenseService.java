@@ -8,7 +8,9 @@ import dev.magadiflo.licensing.app.config.ServiceProperties;
 import dev.magadiflo.licensing.app.model.License;
 import dev.magadiflo.licensing.app.model.Organization;
 import dev.magadiflo.licensing.app.repository.LicenseRepository;
+import io.github.resilience4j.bulkhead.annotation.Bulkhead;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
@@ -36,8 +38,10 @@ public class LicenseService {
     private final OrganizationDiscoveryClient organizationDiscoveryClient;
     private final OrganizationRestClient organizationRestClient;
 
-    @CircuitBreaker(name = "licenseService")
-    public List<License> getLicensesByOrganization(String organizationId, String action) {
+    @Retry(name = "retryLicenseService", fallbackMethod = "buildFallbackLicenseList")
+    @Bulkhead(name = "bulkheadLicenseService", fallbackMethod = "buildFallbackLicenseList")
+    @CircuitBreaker(name = "licenseService", fallbackMethod = "buildFallbackLicenseList")
+    public List<License> getLicensesByOrganization(String organizationId, String action) throws TimeoutException {
         switch (action) {
             case "exception" -> this.timeoutException();
             case "sleep" -> this.sleep();
@@ -116,15 +120,27 @@ public class LicenseService {
         };
     }
 
+
+    public List<License> buildFallbackLicenseList(String organizationId, String action, Throwable throwable) {
+        log.info("Ejecutando método alternativo: buildFallbackLicenseList()");
+        log.info("Mensaje de error: {}", throwable.getMessage());
+        License license = new License();
+        license.setLicenseId("0000000-00-00000");
+        license.setOrganizationId(organizationId);
+        license.setProductName("Lo sentimos, no hay información de licencia disponible actualmente");
+        return List.of(license);
+    }
+
     @CircuitBreaker(name = "organizationService")
     private Organization getOrganization(String organizationId) {
         return this.organizationRestTemplateClient.getOrganization(organizationId);
     }
 
-    // Nos da una posibilidad entre tres de que una llamada a la base de datos dure mucho tiempo
-    private void randomlyRunLong() {
+    // Nos da la posibilidad de que la llamada lance una excepción, se duerma, o sea exitosa
+    private void randomlyRunLong() throws TimeoutException {
         Random random = new Random();
-        int randomNum = random.nextInt(3) + 1;
+        int randomNum = random.nextInt(4) + 1;
+        if (randomNum == 1) this.timeoutException();
         if (randomNum == 3) this.sleep();
     }
 
@@ -138,11 +154,7 @@ public class LicenseService {
     }
 
     // Lanza un error
-    private void timeoutException() {
-        try {
-            throw new TimeoutException();
-        } catch (TimeoutException e) {
-            throw new RuntimeException(e);
-        }
+    private void timeoutException() throws TimeoutException {
+        throw new TimeoutException();
     }
 }

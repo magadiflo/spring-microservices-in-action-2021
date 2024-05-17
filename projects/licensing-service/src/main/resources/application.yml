@@ -35,9 +35,36 @@ resilience4j:
         failureRateThreshold: 50
         waitDurationInOpenState: 10s
         permittedNumberOfCallsInHalfOpenState: 3
+        recordExceptions:
+          - org.springframework.web.client.HttpServerErrorException
+          - java.io.IOException
+          - java.util.concurrent.TimeoutException
+          - org.springframework.web.client.ResourceAccessException
       organizationService:
         registerHealthIndicator: true
         slidingWindowSize: 6
         failureRateThreshold: 60
         waitDurationInOpenState: 20s
         permittedNumberOfCallsInHalfOpenState: 4
+
+  bulkhead:
+    instances:
+      bulkheadLicenseService:
+        maxWaitDuration: 10ms
+        maxConcurrentCalls: 20
+
+  thread-pool-bulkhead:
+    instances:
+      bulkheadLicenseService:
+        maxThreadPoolSize: 1
+        coreThreadPoolSize: 1
+        queueCapacity: 1
+        keepAliveDuration: 20ms
+
+  retry:
+    instances:
+      retryLicenseService:
+        maxAttempts: 5
+        waitDuration: 10s
+        retryExceptions:
+          - java.util.concurrent.TimeoutException
