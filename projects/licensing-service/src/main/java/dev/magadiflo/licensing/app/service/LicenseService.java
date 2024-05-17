@@ -10,6 +10,7 @@ import dev.magadiflo.licensing.app.model.Organization;
 import dev.magadiflo.licensing.app.repository.LicenseRepository;
 import io.github.resilience4j.bulkhead.annotation.Bulkhead;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.github.resilience4j.retry.annotation.Retry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +39,7 @@ public class LicenseService {
     private final OrganizationDiscoveryClient organizationDiscoveryClient;
     private final OrganizationRestClient organizationRestClient;
 
+    @RateLimiter(name = "licenseService", fallbackMethod = "buildFallbackLicenseList")
     @Retry(name = "retryLicenseService", fallbackMethod = "buildFallbackLicenseList")
     @Bulkhead(name = "bulkheadLicenseService", fallbackMethod = "buildFallbackLicenseList")
     @CircuitBreaker(name = "licenseService", fallbackMethod = "buildFallbackLicenseList")
