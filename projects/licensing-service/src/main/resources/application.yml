@@ -26,6 +26,11 @@ management:
     circuitbreakers:
       enabled: true
 
+logging:
+  level:
+    org.springframework.web: WARN
+    dev.magadiflo: DEBUG
+
 resilience4j:
   circuitbreaker:
     instances:

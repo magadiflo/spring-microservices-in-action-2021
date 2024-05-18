@@ -2,7 +2,9 @@ package dev.magadiflo.licensing.app.controller;
 
 import dev.magadiflo.licensing.app.model.License;
 import dev.magadiflo.licensing.app.service.LicenseService;
+import dev.magadiflo.licensing.app.utils.UserContextHolder;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +18,7 @@ import java.util.concurrent.TimeoutException;
  * entre los diferentes clientes que podrían utilizar su servicio.
  */
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(path = "/v1/organization/{organizationId}/license")
@@ -27,6 +30,7 @@ public class LicenseController {
     @GetMapping
     public ResponseEntity<List<License>> getLicenses(@PathVariable String organizationId,
                                                      @RequestParam(defaultValue = "success") String action) throws TimeoutException {
+        log.info("LicenseServiceController Correlation ID: {}", UserContextHolder.getContext().getCorrelationId());
         return ResponseEntity.ok(this.licenseService.getLicensesByOrganization(organizationId, action));
     }
 

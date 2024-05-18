@@ -8,6 +8,7 @@ import dev.magadiflo.licensing.app.config.ServiceProperties;
 import dev.magadiflo.licensing.app.model.License;
 import dev.magadiflo.licensing.app.model.Organization;
 import dev.magadiflo.licensing.app.repository.LicenseRepository;
+import dev.magadiflo.licensing.app.utils.UserContextHolder;
 import io.github.resilience4j.bulkhead.annotation.Bulkhead;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
@@ -44,6 +45,7 @@ public class LicenseService {
     @Bulkhead(name = "bulkheadLicenseService", fallbackMethod = "buildFallbackLicenseList")
     @CircuitBreaker(name = "licenseService", fallbackMethod = "buildFallbackLicenseList")
     public List<License> getLicensesByOrganization(String organizationId, String action) throws TimeoutException {
+        log.debug("getLicensesByOrganization Correlation ID: {}", UserContextHolder.getContext().getCorrelationId());
         switch (action) {
             case "exception" -> this.timeoutException();
             case "sleep" -> this.sleep();
