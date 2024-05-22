@@ -8,3 +8,8 @@ spring:
 
   config:
     import: optional:configserver:http://localhost:8888
+
+logging:
+  level:
+    org.springframework.web: WARN
+    dev.magadiflo: DEBUG
