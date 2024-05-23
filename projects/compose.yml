@@ -1,0 +1,12 @@
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:21.0.2
+    container_name: c-keycloak
+    restart: unless-stopped
+    command:
+      - 'start-dev'
+    ports:
+      - 8181:8080
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
