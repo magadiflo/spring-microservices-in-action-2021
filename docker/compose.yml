@@ -1,4 +1,22 @@
 services:
+  postgres_for_keycloak:
+    image: postgres:15.2-alpine
+    container_name: c-postgres-for-keycloak
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: db_keycloak
+      POSTGRES_USER: magadiflo
+      POSTGRES_PASSWORD: magadiflo
+    ports:
+      - 5435:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ 'CMD-SHELL', 'pg_isready -U magadiflo -d db_keycloak' ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   keycloak:
     image: quay.io/keycloak/keycloak:21.0.2
     container_name: c-keycloak
@@ -7,6 +25,19 @@ services:
       - 'start-dev'
     ports:
       - 8181:8080
+    depends_on:
+      postgres_for_keycloak:
+        condition: service_healthy
     environment:
+      KC_DB: postgres
+      KC_DB_URL_HOST: postgres_for_keycloak
+      KC_DB_URL_DATABASE: db_keycloak
+      KC_DB_USERNAME: magadiflo
+      KC_DB_PASSWORD: magadiflo
+      KC_DB_SCHEMA: public
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
+
+volumes:
+  postgres_data:
+    name: postgres_data
