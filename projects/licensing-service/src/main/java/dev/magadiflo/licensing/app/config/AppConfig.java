@@ -1,5 +1,6 @@
 package dev.magadiflo.licensing.app.config;
 
+import dev.magadiflo.licensing.app.utils.PropagationInterceptor;
 import dev.magadiflo.licensing.app.utils.UserContextInterceptor;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
@@ -28,7 +29,8 @@ public class AppConfig {
     public RestClient.Builder restClientBuilder() {
         return RestClient.builder()
                 .requestInterceptors(clientHttpRequestInterceptors ->
-                        clientHttpRequestInterceptors.add(new UserContextInterceptor()));
+                        clientHttpRequestInterceptors.addAll(List.of(new UserContextInterceptor(), new PropagationInterceptor()))
+                );
     }
 
 }
