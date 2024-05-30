@@ -22,6 +22,7 @@ public class PropagationInterceptor implements ClientHttpRequestInterceptor {
             return execution.execute(request, body);
         }
 
+        log.info("Propagando access_token: {}", token.getTokenValue());
         request.getHeaders().setBearerAuth(token.getTokenValue());
         return execution.execute(request, body);
     }
