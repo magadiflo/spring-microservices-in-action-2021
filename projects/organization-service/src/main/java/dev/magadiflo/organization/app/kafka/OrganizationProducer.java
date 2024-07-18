@@ -22,12 +22,10 @@ public class OrganizationProducer {
     public void publishOrganizationChange(ActionEnum action, String organizationId) {
         log.debug("Enviando mensaje a Kafka {} para el organizationId {}", action, organizationId);
 
-        OrganizationChangeModel organizationChangeModel = OrganizationChangeModel.builder()
-                .type(OrganizationChangeModel.class.getTypeName())
-                .action(action.name())
-                .organizationId(organizationId)
-                .correlationId(UserContextHolder.getContext().getCorrelationId())
-                .build();
+        OrganizationChangeModel organizationChangeModel = new OrganizationChangeModel(
+                action.name(),
+                organizationId,
+                UserContextHolder.getContext().getCorrelationId());
 
         Message<OrganizationChangeModel> message = MessageBuilder
                 .withPayload(organizationChangeModel)

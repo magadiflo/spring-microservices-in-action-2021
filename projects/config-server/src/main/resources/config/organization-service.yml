@@ -20,7 +20,7 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:
-        spring.json.type.mapping: organizationChangeModelToken:dev.magadiflo.organization.app.model.dto.OrganizationChangeModel
+        spring.json.type.mapping: organizationChangeToken:dev.magadiflo.organization.app.model.dto.OrganizationChangeModel
 
 management:
   endpoints:
