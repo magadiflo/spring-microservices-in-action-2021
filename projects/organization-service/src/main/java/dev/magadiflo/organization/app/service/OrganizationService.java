@@ -1,6 +1,8 @@
 package dev.magadiflo.organization.app.service;
 
+import dev.magadiflo.organization.app.kafka.OrganizationProducer;
 import dev.magadiflo.organization.app.model.Organization;
+import dev.magadiflo.organization.app.model.enums.ActionEnum;
 import dev.magadiflo.organization.app.repository.OrganizationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
@@ -17,6 +19,7 @@ public class OrganizationService {
 
     private final OrganizationRepository organizationRepository;
     private final Environment environment;
+    private final OrganizationProducer organizationProducer;
 
     @Transactional(readOnly = true)
     public Organization findById(String organizationId) {
@@ -24,6 +27,8 @@ public class OrganizationService {
                 .map(organizationDB -> {
                     Integer port = Integer.parseInt(Objects.requireNonNull(this.environment.getProperty("local.server.port")));
                     organizationDB.setPort(port);
+
+                    this.organizationProducer.publishOrganizationChange(ActionEnum.GET, organizationId);
                     return organizationDB;
                 })
                 .orElseThrow(() -> new NoSuchElementException("No existe la Organización con el id %s".formatted(organizationId)));
@@ -32,7 +37,9 @@ public class OrganizationService {
     @Transactional
     public Organization create(Organization organization) {
         organization.setOrganizationId(UUID.randomUUID().toString());
-        return this.organizationRepository.save(organization);
+        Organization organizationDB = this.organizationRepository.save(organization);
+        this.organizationProducer.publishOrganizationChange(ActionEnum.CREATED, organizationDB.getOrganizationId());
+        return organizationDB;
     }
 
     @Transactional
@@ -45,12 +52,17 @@ public class OrganizationService {
                     organizationDB.setContactPhone(organization.getContactPhone());
                     return organizationDB;
                 })
-                .map(this.organizationRepository::save)
+                .map(organizationDB -> {
+                    this.organizationRepository.save(organizationDB);
+                    this.organizationProducer.publishOrganizationChange(ActionEnum.UPDATED, organizationId);
+                    return organizationDB;
+                })
                 .orElseThrow(() -> new NoSuchElementException("No hay organizació con id %s para actualizar".formatted(organizationId)));
     }
 
     @Transactional
     public void delete(String organizationId) {
         this.organizationRepository.deleteById(organizationId);
+        this.organizationProducer.publishOrganizationChange(ActionEnum.DELETED, organizationId);
     }
 }
