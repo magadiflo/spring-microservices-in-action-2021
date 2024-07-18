@@ -24,6 +24,7 @@ management:
 logging:
   level:
     org.hibernate.SQL: DEBUG
+    dev.magadiflo: DEBUG
 
 eureka:
   instance:

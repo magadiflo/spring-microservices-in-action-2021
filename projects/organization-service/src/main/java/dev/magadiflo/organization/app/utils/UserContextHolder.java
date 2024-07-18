@@ -1,4 +1,4 @@
-package dev.magadiflo.licensing.app.utils;
+package dev.magadiflo.organization.app.utils;
 
 import org.springframework.util.Assert;
 

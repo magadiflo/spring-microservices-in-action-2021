@@ -26,7 +26,7 @@ public class ResponseFilter {
                     HttpHeaders headers = exchange.getRequest().getHeaders();
                     String correlationId = this.filterUtils.getCorrelationId(headers);
 
-                    log.debug("Agregando el correlation ID a los headers salientes");
+                    log.debug("Agregando ID de correlación a los headers de respuesta: {}", correlationId);
 
                     exchange.getResponse()
                             .getHeaders()
