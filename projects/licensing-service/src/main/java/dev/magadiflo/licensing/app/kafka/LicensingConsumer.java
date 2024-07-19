@@ -13,7 +13,7 @@ public class LicensingConsumer {
 
     @KafkaListener(topics = "org-change-topic", groupId = "licensing-group")
     public void consumeOrganizationChange(OrganizationChange organizationChange) {
-        log.debug("Se recibió un {} evento para el ID de la organización {} con id de correlación {}",
+        log.debug("Se recibió el evento {} para el ID de la organización {} con id de correlación {}",
                 organizationChange.action(), organizationChange.organizationId(), organizationChange.correlationId());
     }
 
