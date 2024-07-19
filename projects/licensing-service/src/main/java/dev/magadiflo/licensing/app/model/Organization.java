@@ -1,6 +1,11 @@
 package dev.magadiflo.licensing.app.model;
 
-public record Organization(String organizationId,
+import jakarta.persistence.Id;
+import org.springframework.data.redis.core.RedisHash;
+
+@RedisHash("organizations")
+public record Organization(@Id
+                           String organizationId,
                            String name,
                            String contactName,
                            String contactEmail,
