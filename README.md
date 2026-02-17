@@ -1,7 +1,7 @@
 # (Book) Spring Microservices In Action, Second Edition - 2021
 
-Este repositorio corresponde a los temas tratados en el libro **Spring Microservices In Action, Second Edition - 2021
-**cuyos autores son **John Carnell y Illary Huaylupo Sánchez.**
+Este repositorio corresponde a los temas tratados en el libro
+**Spring Microservices In Action, Second Edition - 2021** cuyos autores son **John Carnell y Illary Huaylupo Sánchez.**
 
 - Repositorio oficial del
   libro [Spring Microservices in Action - Second Edition - Code Examples](https://github.com/ihuaylupo/manning-smia)
